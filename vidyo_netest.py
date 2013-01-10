@@ -46,4 +46,4 @@ if __name__ == "__main__":
   lp[:] = [host for host in lp if not ping(host)]
   main(lr,lp)
   print "Done"
-  raw_input("Press Enter to continue...")
+  #raw_input("Press Enter to continue...")
