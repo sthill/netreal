@@ -36,11 +36,13 @@ def main(lr,lp):
         if int(t2.read().strip()) != 0:
 	    print "From "+host+" port 17991 is closed in " + line
     except:
-      print "Connection Error to "+host
+      print "SHH connection error or not open to "+host
 
 if __name__ == "__main__":
-  lr = [line.strip() for line in open("routers", 'r')]
-  lp = [line.strip() for line in open("portals", 'r')]
+  lr = [line.strip() for line in (x for x in open("routers", 'r') if not x.startswith('#'))]
+  print lr
+  lp = [line.strip() for line in (x for x in open("portals", 'r') if not x.startswith('#'))]
+  print lp
   print "Checking Routers Connectivity..."
   lr[:] = [host for host in lr if not ping(host)]
   lp[:] = [host for host in lp if not ping(host)]
