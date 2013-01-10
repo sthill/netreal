@@ -40,9 +40,7 @@ def main(lr,lp):
 
 if __name__ == "__main__":
   lr = [line.strip() for line in (x for x in open("routers", 'r') if not x.startswith('#'))]
-  print lr
   lp = [line.strip() for line in (x for x in open("portals", 'r') if not x.startswith('#'))]
-  print lp
   print "Checking Routers Connectivity..."
   lr[:] = [host for host in lr if not ping(host)]
   lp[:] = [host for host in lp if not ping(host)]
