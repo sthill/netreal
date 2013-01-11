@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-import paramiko,getpass,os,subprocess,conf
+import paramiko,getpass,os,subprocess,conf, inspect
 from mail_handler import cernMail
 
 messages = []
@@ -42,8 +42,13 @@ def main(lr,lp):
       messages.append("SSH connection error or not open to "+host)
 
 if __name__ == "__main__":
-  lr = [line.strip() for line in (x for x in open("routers", 'r') if not x.startswith('#'))]
-  lp = [line.strip() for line in (x for x in open("portals", 'r') if not x.startswith('#'))]
+  path = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe())))
+  if os.name == 'nt':
+    path += "\\"
+  else:
+    path += "/" 
+  lr = [line.strip() for line in (x for x in open(path + "routers", 'r') if not x.startswith('#'))]
+  lp = [line.strip() for line in (x for x in open(path + "portals", 'r') if not x.startswith('#'))]
   print "Checking Routers Connectivity..."
   lr[:] = [host for host in lr if not ping(host)]
   lp[:] = [host for host in lp if not ping(host)]
