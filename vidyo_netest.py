@@ -5,22 +5,6 @@ from mail_handler import cernMail
 
 messages = []
 
-def sendmail(me, you, message):
-  sub = "Problem(s) with Vidyo Routers Connectivity"
-  """  if os.name == 'nt':
-    process = subprocess.Popen("sendEmail \
-      -f " + me + " \
-      -t " + you + " \
-      -u " + sub  + " \
-      -m " + message + " \
-      -s smtp.cern.ch:587 -xu " + conf.AVC_USER + " -xp " + conf.AVC_PWD + " \
-      -o tls=yes",stdout=subprocess.PIPE)
-    process.wait()
-    process.returncode
-  else:"""
-  m = cernMail(me, [you], sub, message)
-  m.send()
-
 def ping(host):
   if os.name == 'nt':
     process = subprocess.Popen("ping -n 1 "+host,stdout=subprocess.PIPE)
@@ -65,7 +49,11 @@ if __name__ == "__main__":
   lp[:] = [host for host in lp if not ping(host)]
   main(lr,lp)
   if messages:
-    str1 = "\n".join(messages)
-    sendmail("service-avc-operation@cern.ch","bruno.bompastor@cern.ch",str1)
+    body = "\n".join(messages)
+    fr0m = "service-avc-operation@cern.ch"
+    to = ["bruno.bompastor@cern.ch"]
+    sub = "Problem(s) with Vidyo Routers Connectivity"
+    m = cernMail(fr0m, to, sub, body)
+    m.send()
+    
   print "Done"
-  #raw_input("Press Enter to continue...")
