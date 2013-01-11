@@ -1,31 +1,25 @@
 #!/usr/bin/env python
 
 import paramiko,getpass,os,subprocess,conf
+from mail_handler import cernMail
 
 messages = []
 
-def sendmail(to, message):
-  if os.name == 'nt':
+def sendmail(me, you, message):
+  sub = "Problem(s) with Vidyo Routers Connectivity"
+  """  if os.name == 'nt':
     process = subprocess.Popen("sendEmail \
-      -f avc@cern.ch \
-      -t " + to +" \
-      -u Problem(s) with Vidyo Routers Connectivity \
+      -f " + me + " \
+      -t " + you + " \
+      -u " + sub  + " \
       -m " + message + " \
       -s smtp.cern.ch:587 -xu " + conf.AVC_USER + " -xp " + conf.AVC_PWD + " \
       -o tls=yes",stdout=subprocess.PIPE)
     process.wait()
-    response = process.returncode
-  else:
-    response = os.system("sendmail \
-      -f avc@cern.ch \
-      -t " + to +" \
-      -u Problem(s) with Vidyo Routers Connectivity \
-      -m " + message + " \
-      -s smtp.cern.ch:587 -xu " + conf.AVC_USER + " -xp " + conf.AVC_PWD + " \
-      -o tls=yes > /dev/null")
-  if response != 0:
-    print "Email was not sent!"
-  return response
+    process.returncode
+  else:"""
+  m = cernMail(me, [you], sub, message)
+  m.send()
 
 def ping(host):
   if os.name == 'nt':
@@ -72,7 +66,6 @@ if __name__ == "__main__":
   main(lr,lp)
   if messages:
     str1 = "\n".join(messages)
-    print str1
-    sendmail("bruno.bompastor@cern.ch",str1)
+    sendmail("service-avc-operation@cern.ch","bruno.bompastor@cern.ch",str1)
   print "Done"
   #raw_input("Press Enter to continue...")
