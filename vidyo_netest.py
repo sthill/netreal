@@ -56,7 +56,7 @@ if __name__ == "__main__":
   if messages:
     body = "\n".join(messages)
     fr0m = "service-avc-operation@cern.ch"
-    to = ["bruno.bompastor@cern.ch"]
+    to = ["service-avc-operation@cern.ch"]
     sub = "Problem(s) with Vidyo Routers Connectivity"
     m = cernMail(fr0m, to, sub, body)
     m.send()
