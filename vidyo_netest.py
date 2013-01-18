@@ -7,13 +7,13 @@ messages = []
 
 def ping(host):
   if os.name == 'nt':
-    process = subprocess.Popen("ping -n 1 "+host,stdout=subprocess.PIPE)
+    process = subprocess.Popen("ping -n 1 "+host[0],stdout=subprocess.PIPE)
     process.wait()
     response = process.returncode
   else:
-    response = os.system("ping -c 1 " + host +" > /dev/null")   
+    response = os.system("ping -c 1 " + host[0] + " > /dev/null")   
   if response != 0:
-    messages.append(host + ' is not reachable!')
+    messages.append(host[1] + " (" + host[0] + ") is not reachable!")
   return response
 
 def main(lr,lp):
@@ -29,17 +29,17 @@ def main(lr,lp):
     try:
       ssh = paramiko.SSHClient()
       ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
-      ssh.connect(host, username=user, password=pwd, port=sshport, timeout=5)
+      ssh.connect(host[0], username=user, password=pwd, port=sshport, timeout=5)
       for line in lr:
-        t1, t2, t3 = ssh.exec_command("nc -z " + line + " 17990; echo $?")
+        t1, t2, t3 = ssh.exec_command("nc -z " + line[0] + " 17990; echo $?")
         if int(t2.read().strip()) != 0:  
-          messages.append("From "+host+" port 17990 is closed in " + line)
+          messages.append("From " + host[1] + " (" + host[0] + ") port 17990 is closed in " + line[1] + " (" + line[0] + ")")
       for line in lp:
-        t1, t2, t3 = ssh.exec_command("nc -z " + line + " 17991; echo $?")
+        t1, t2, t3 = ssh.exec_command("nc -z " + line[0] + " 17991; echo $?")
         if int(t2.read().strip()) != 0:
-          messages.append("From "+host+" port 17991 is closed in " + line)
+          messages.append("From " + host[1] + " (" + host[0] + ") port 17991 is closed in " + line[1] + " (" + line[0] + ")")
     except:
-      messages.append("SSH connection error or not open to "+host)
+      messages.append("SSH connection error or not open to " + host[1] + " (" + host[0] + ")")
 
 if __name__ == "__main__":
   path = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe())))
@@ -47,8 +47,9 @@ if __name__ == "__main__":
     path += "\\"
   else:
     path += "/" 
-  lr = [line.strip() for line in (x for x in open(path + "routers.txt", 'r') if not x.startswith('#'))]
-  lp = [line.strip() for line in (x for x in open(path + "portals.txt", 'r') if not x.startswith('#'))]
+  lr = [tuple(line.strip().split(':')) for line in (x for x in open(path + "routers.txt", 'r') if not x.startswith('#'))]
+  print lr
+  lp = [tuple(line.strip().split(':')) for line in (x for x in open(path + "portals.txt", 'r') if not x.startswith('#'))]
   print "Checking Routers Connectivity..."
   lr[:] = [host for host in lr if not ping(host)]
   lp[:] = [host for host in lp if not ping(host)]
@@ -56,8 +57,9 @@ if __name__ == "__main__":
   if messages:
     body = "\n".join(messages)
     fr0m = "service-avc-operation@cern.ch"
-    to = ["service-avc-operation@cern.ch"]
-    sub = "Problem(s) with Vidyo Routers Connectivity"
+    #to = ["service-avc-operation@cern.ch"]
+    to = ["bruno.bompastor@cern.ch"]
+    sub = "[Vidyo] Problem(s) with Vidyo Routers Connectivity"
     m = cernMail(fr0m, to, sub, body)
     m.send()
     
