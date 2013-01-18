@@ -47,8 +47,8 @@ if __name__ == "__main__":
     path += "\\"
   else:
     path += "/" 
-  lr = [line.strip() for line in (x for x in open(path + "routers", 'r') if not x.startswith('#'))]
-  lp = [line.strip() for line in (x for x in open(path + "portals", 'r') if not x.startswith('#'))]
+  lr = [line.strip() for line in (x for x in open(path + "routers.txt", 'r') if not x.startswith('#'))]
+  lp = [line.strip() for line in (x for x in open(path + "portals.txt", 'r') if not x.startswith('#'))]
   print "Checking Routers Connectivity..."
   lr[:] = [host for host in lr if not ping(host)]
   lp[:] = [host for host in lp if not ping(host)]
