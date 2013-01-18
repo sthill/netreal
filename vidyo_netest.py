@@ -48,7 +48,6 @@ if __name__ == "__main__":
   else:
     path += "/" 
   lr = [tuple(line.strip().split(':')) for line in (x for x in open(path + "routers.txt", 'r') if not x.startswith('#'))]
-  print lr
   lp = [tuple(line.strip().split(':')) for line in (x for x in open(path + "portals.txt", 'r') if not x.startswith('#'))]
   print "Checking Routers Connectivity..."
   lr[:] = [host for host in lr if not ping(host)]
@@ -57,8 +56,7 @@ if __name__ == "__main__":
   if messages:
     body = "\n".join(messages)
     fr0m = "service-avc-operation@cern.ch"
-    #to = ["service-avc-operation@cern.ch"]
-    to = ["bruno.bompastor@cern.ch"]
+    to = ["service-avc-operation@cern.ch"]
     sub = "[Vidyo] Problem(s) with Vidyo Routers Connectivity"
     m = cernMail(fr0m, to, sub, body)
     m.send()
