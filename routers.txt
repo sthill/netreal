@@ -8,9 +8,4 @@
 193.109.175.223:vidyorouter-pic.pic.es
 145.100.5.199:vidyo.grid.sara.nl
 206.12.154.62:vidyorouter.hepnetcanada.ca
-137.138.248.229:vidyorouter1.cern.ch
-192.91.244.171:vidyorouter2.cern.ch
-137.138.248.242:vidyorouter3.cern.ch
-192.91.244.172:vidyorouter4.cern.ch
-137.138.248.205:vidyorouter5.cern.ch
 130.246.196.46:vidyorouter.rl.ac.uk
