@@ -50,8 +50,8 @@ if __name__ == "__main__":
   lr = [tuple(line.strip().split(':')) for line in (x for x in open(path + "routers.txt", 'r') if not x.startswith('#'))]
   lp = [tuple(line.strip().split(':')) for line in (x for x in open(path + "portals.txt", 'r') if not x.startswith('#'))]
   print "Checking Routers Connectivity..."
-  lr[:] = [host for host in lr if not ping(host)]
-  lp[:] = [host for host in lp if not ping(host)]
+  #lr[:] = [host for host in lr if not ping(host)]
+  #lp[:] = [host for host in lp if not ping(host)]
   main(lr,lp)
   if messages:
     body = "\n".join(messages)
