@@ -82,7 +82,6 @@ if __name__ == "__main__":
   for host in lr:
     netest(host,443,"tcp")
     netest(host,17990,"tcp")
-    netest(host,17992,"tcp")
   
   print "Checking Routers SSH Connectivity..."
   lr[:] = [host for host in lr if not ssh(host)]
