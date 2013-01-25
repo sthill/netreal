@@ -35,24 +35,23 @@ def netest(host,port,type):
     s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
   s.settimeout(5)
   
-  if type == "udp":
-    try:
+  try:
+    if type == "udp":
       s.sendto("0", (host[0], port))
-    except Exception:
-      pass
-  else:
-    try:
+    else:
       s.connect((host[0], port))
       s.shutdown(2)
-    except Exception, e:
-      try:
-        errno, errtxt = e
-      except ValueError:
-        messages.append("Cannot connect to " + host[0] + " on TCP port: " + str(port))
+  except Exception, e:
+    try:
+      errno, errtxt = e
+    except ValueError:
+      messages.append("Cannot connect to " + host[0] + " on TCP port: " + str(port))
+    else:
+      if errno != 107:
+        pass
       else:
-        if errno != 107:
-          messages.append("Cannot connect to " + host[0] + " on TCP port: " + str(port))
-  
+        messages.append("Cannot connect to " + host[0] + " on TCP port: " + str(port))
+
   s.close
 
 def udp(host,port):
@@ -61,7 +60,7 @@ def udp(host,port):
     ssh.connect(host[0], username=user, password=pwd, port=sshport, timeout=5)
     t1, t2, t3 = ssh.exec_command("nc -ul -w1 " + str(port))
    
-    netest(host[0],port,"udp")
+    netest(host,port,"udp")
  
     time.sleep(1)
     ssh.close()
