@@ -45,12 +45,12 @@ def netest(host,port,type):
     try:
       errno, errtxt = e
     except ValueError:
-      messages.append("Cannot connect to " + host[0] + " on TCP port: " + str(port))
+      messages.append("Cannot connect to " + host[1] + " (" + host[0] + ") on TCP port: " + str(port))
     else:
       if errno != 107:
         pass
       else:
-        messages.append("Cannot connect to " + host[0] + " on TCP port: " + str(port))
+        messages.append("Cannot connect to " + host[1] + " (" + host[0] + ") on TCP port: " + str(port))
 
   s.close
 
@@ -66,7 +66,7 @@ def udp(host,port):
     ssh.close()
     
     if t2.read().strip() != "0":
-      messages.append("Cannot connect to " + host[0] + " on UDP port: " + str(port))
+      messages.append("Cannot connect to " + host[1] + " (" + host[0] + ") on UDP port: " + str(port))
     
 if __name__ == "__main__":
 
