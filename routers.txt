@@ -1,6 +1,6 @@
 117.103.105.125:vidyoasia.twgrid.org
-#130.199.5.6:bnl-vidyo.bnl.gov
-#131.225.111.220:vidyorouter.fnal.gov
+130.199.5.6:bnl-vidyo.bnl.gov
+131.225.111.220:vidyorouter.fnal.gov
 193.48.95.65:ccvidyo01.in2p3.fr
 131.154.1.49:vidyo.infn.it
 141.52.27.20:vidyo-router.scc.kit.edu
