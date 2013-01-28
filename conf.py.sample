@@ -1,0 +1,12 @@
+# More ports, more time it will take to test...
+TCP_PORTS = [443,17990]
+UDP_PORTS = [50500]
+
+SSH_USER = "user"
+SSH_PWD = "password"
+SSH_PORT = 22
+
+MAIL_SERVER = "smtp.mail.com"
+MAIL_FROM = "user@mail.com"
+MAIL_TO = ["user@mail.com"]
+MAIL_SUBJECT = "Subject"
