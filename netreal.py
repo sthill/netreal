@@ -9,13 +9,7 @@ import socket
 import time
 
 import logging 
-logging.getLogger("paramiko").setLevel(logging.CRITICAL)
-logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
-
-from mail_handler import cernMail
-
-# Messages buffer
-messages = []
+import loggingSMTP
 
 # Hosts login credentials  
 user = conf.SSH_USER 
@@ -23,6 +17,33 @@ pwd = conf.SSH_PWD
 
 # SSH port  
 sshport = conf.SSH_PORT 
+
+# TCP and UDP ports
+tcports = conf.TCP_PORTS
+udports = conf.UDP_PORTS
+
+# Mail details
+mailserver = conf.MAIL_SERVER
+mailfrom = conf.MAIL_FROM
+mailto = conf.MAIL_TO
+mailsubject = conf.MAIL_SUBJECT
+
+# Logging
+logging.getLogger("paramiko").setLevel(logging.CRITICAL)
+
+log = logging.getLogger()
+log.setLevel(logging.DEBUG)
+log_format = logging.Formatter('%(asctime)s - %(levelname)s - %(message)s')
+
+mh = loggingSMTP.BufferingSMTPHandler(mailserver, mailfrom, mailto, mailsubject,5000)
+mh.setLevel(logging.DEBUG)
+mh.setFormatter(log_format)
+log.addHandler(mh)
+
+ch = logging.StreamHandler()
+ch.setLevel(logging.DEBUG)
+ch.setFormatter(log_format)
+log.addHandler(ch)
 
 def ssh(host):
   """ Test ssh connection """
@@ -33,7 +54,7 @@ def ssh(host):
     ssh.close
     response = 0
   except:
-    logging.error("SSH connection error or not open to " + host[1] + " (" + host[0] + ")")
+    log.error("SSH connection error or not open to " + host[1] + " (" + host[0] + ")")
     response = 1
   return response
 
@@ -58,12 +79,12 @@ def netest(host,port,type):
     try:
       errno, errtxt = e
     except ValueError:
-      messages.append("Cannot connect to " + host[1] + " (" + host[0] + ") on TCP port: " + str(port))
+      log.critical("Cannot connect to " + host[1] + " (" + host[0] + ") on TCP port: " + str(port))
     else:
       if errno != 107:
         pass
       else:
-        messages.append("Cannot connect to " + host[1] + " (" + host[0] + ") on TCP port: " + str(port))
+        log.critical("Cannot connect to " + host[1] + " (" + host[0] + ") on TCP port: " + str(port))
 
   s.close
 
@@ -84,7 +105,7 @@ def udp(host,port):
   ssh.close()
   
   if t2.read().strip() != "0":
-    messages.append("Cannot connect to " + host[1] + " (" + host[0] + ") on UDP port: " + str(port))
+    log.critical("Cannot connect to " + host[1] + " (" + host[0] + ") on UDP port: " + str(port))
     
 if __name__ == "__main__":
 
@@ -96,26 +117,20 @@ if __name__ == "__main__":
     path += "/" 
   lr = [tuple(line.strip().split(':')) for line in (x for x in open(path + "hosts.txt", 'r') if not x.startswith('#'))]
   
-  logging.info('Testing TCP Ports...')
+  log.info('Testing TCP Ports...')
   for host in lr:
-    for port in conf.TCP_PORTS:
+    for port in tcports:
       netest(host,port,"tcp")
   
-  logging.info('Checking Hosts SSH Connectivity...')
+  log.info('Checking Hosts SSH Connectivity...')
   lr[:] = [host for host in lr if not ssh(host)]
   
-  logging.info('Testing UDP Ports...')
+  log.info('Testing UDP Ports...')
   for host in lr:
-    for port in conf.UDP_PORTS:
+    for port in udports:
       udp(host,port)
 
-  if messages:
-    body = "\n".join(messages)
-    logging.info(body)
-    #fr0m = "service-avc-operation@cern.ch"
-    #to = ["service-avc-operation@cern.ch"]
-    #sub = "[Vidyo] Problem(s) with Vidyo Routers Connectivity"
-    #m = cernMail(fr0m, to, sub, body)
-    #m.send()
-    
-  logging.info('Done')
+  log.info('Done')
+  # Send mail with log
+  mh.flush()
+  logging.shutdown()
