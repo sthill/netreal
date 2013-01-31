@@ -36,7 +36,7 @@ log.setLevel(logging.DEBUG)
 log_format = logging.Formatter('%(asctime)s - %(levelname)s - %(message)s')
 
 mh = loggingSMTP.BufferingSMTPHandler(mailserver, mailfrom, mailto, mailsubject,5000)
-mh.setLevel(logging.DEBUG)
+mh.setLevel(logging.CRITICAL)
 mh.setFormatter(log_format)
 log.addHandler(mh)
 
@@ -94,6 +94,7 @@ def udp(host,port):
       waits for a packet.
   """
 
+  err = 0
   ssh = paramiko.SSHClient()
   ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
   ssh.connect(host[0], username=user, password=pwd, port=sshport, timeout=5)
@@ -105,8 +106,11 @@ def udp(host,port):
   ssh.close()
   
   if t2.read().strip() != "0":
-    log.critical("Cannot connect to " + host[1] + " (" + host[0] + ") on UDP port: " + str(port))
-    
+    log.error("Cannot connect to " + host[1] + " (" + host[0] + ") on UDP port: " + str(port))
+    err = 1
+
+  return err
+
 if __name__ == "__main__":
 
   # Find the right path for files (win or unix)
@@ -127,8 +131,11 @@ if __name__ == "__main__":
   
   log.info('Testing UDP Ports...')
   for host in lr:
+    err = 0
     for port in udports:
-      udp(host,port)
+      err += udp(host,port)
+    if err > 2:
+      log.critical(host[1] + " (" + host[0] + ") has UDP ports closed")
 
   log.info('Done')
   # Send mail with log
