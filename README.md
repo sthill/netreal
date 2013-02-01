@@ -1,9 +1,6 @@
 # _NetReal_
 
-_Description: NetReal is a simple python script for testing network connectivity.   
-Checks if a set of TCP and UDP ports are open on the choosen hosts.  
-It's real because it really tests if a UDP port is open on the host by checking  
-the received packet._
+_Description: NetReal is a simple python script for testing network connectivity. Checks if a set of TCP and UDP ports are open on the choosen hosts. It's real because it really tests if a UDP port is open on the host by checking the received packet._
 
 ## Project Setup
 
