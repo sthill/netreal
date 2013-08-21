@@ -1,1 +1,2 @@
-print "yo"
+def test_yo():
+  print "yo"
