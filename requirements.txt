@@ -1,1 +1,4 @@
+pyOpenSSL==0.10
+pycrypto==2.0.1
+pycurl==7.19.0
 paramiko==1.7.5
