@@ -45,7 +45,7 @@ ch.setLevel(logging.DEBUG)
 ch.setFormatter(log_format)
 log.addHandler(ch)
 
-def ssh(host):
+def test_ssh(host):
   """ Test ssh connection """
   try:
     ssh = paramiko.SSHClient()
@@ -58,7 +58,7 @@ def ssh(host):
     response = 1
   return response
 
-def net(host,port,type):
+def test_net(host,port,type):
   """ Test port connectivity 
       type => ["tcp" or "udp"] 
   """
@@ -88,7 +88,7 @@ def net(host,port,type):
 
   s.close
 
-def udp(host,port):
+def test_udp(host,port):
   """ Check if udp packet was received.
       Connects through ssh, opens a udp server and
       waits for a packet.
@@ -100,7 +100,7 @@ def udp(host,port):
   ssh.connect(host[0], username=user, password=pwd, port=sshport, timeout=5)
   t1, t2, t3 = ssh.exec_command("nc -ul -w1 " + str(port))
  
-  net(host,port,"udp")
+  test_net(host,port,"udp")
 
   time.sleep(5)
   ssh.close()
@@ -111,7 +111,7 @@ def udp(host,port):
 
   return err
 
-def test_netreal():
+if __name__ == "__main__":
 
   # Find the right path for files (win or unix)
   path = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe())))
@@ -124,16 +124,16 @@ def test_netreal():
   log.info('Testing TCP Ports...')
   for host in lr:
     for port in tcports:
-      net(host,port,"tcp")
+      test_net(host,port,"tcp")
   
   log.info('Checking Hosts SSH Connectivity...')
-  lr[:] = [host for host in lr if not ssh(host)]
+  lr[:] = [host for host in lr if not test_ssh(host)]
   
   log.info('Testing UDP Ports...')
   for host in lr:
     err = 0
     for port in udports:
-      err += udp(host,port)
+      err += test_udp(host,port)
     if err > 2:
       log.critical(host[1] + " (" + host[0] + ") has UDP ports closed")
 
